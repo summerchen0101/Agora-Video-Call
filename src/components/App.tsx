@@ -1,8 +1,8 @@
 import React from 'react';
 import { Card, Collapse } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import BasicFrom from './BasicForm';
-import AdvanceForm from './AdvanceForm';
+import BasicFrom from '../containers/BasicForm';
+import AdvanceForm from '../containers/AdvanceForm';
 import styled from 'styled-components';
 
 import AgoraRTC from 'agora-rtc-sdk';

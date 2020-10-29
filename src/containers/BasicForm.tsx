@@ -13,7 +13,7 @@ import {
   removeStreamPlayers,
 } from '@/store/reducer';
 import AgoraRTC from '@/utils/AgoraEnhancer';
-import FormWrapper from './FormWrapper';
+import FormWrapper from '../components/FormWrapper';
 import { rtc } from '@/utils/rtc';
 import { handleEvent } from '@/utils/streamEventHandler';
 import { useForm } from 'antd/lib/form/Form';

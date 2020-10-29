@@ -11,7 +11,7 @@ import {
   useTypedSelector,
 } from '@/store/reducer';
 import AgoraRTC from '@/utils/AgoraEnhancer';
-import FormWrapper from './FormWrapper';
+import FormWrapper from '../components/FormWrapper';
 import { useForm } from 'antd/lib/form/Form';
 
 const { Option } = Select;

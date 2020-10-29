@@ -17,10 +17,9 @@ interface IRootState {
 export const useTypedSelector: TypedUseSelectorHook<IRootState> = useSelector;
 
 const initialState: IRootState = {
-  appId: '246a5190e9c544f5973e41237cc100f5',
-  channel: 'A cool channel',
-  token:
-    '006246a5190e9c544f5973e41237cc100f5IACSPTUJ0OI2yNhVQTyFKOdIWfnm8LUWWHXbWcnzZxRzC5Hmy34AAAAAEABO10qJuW6bXwEAAQC5bptf',
+  appId: '',
+  channel: '',
+  token: '',
   uid: undefined,
   camara: '',
   microphone: 'default',
