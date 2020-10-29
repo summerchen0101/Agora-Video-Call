@@ -28,7 +28,7 @@ const App: React.FC = () => {
   return (
     <div style={{ display: 'flex' }}>
       <div style={{ width: 480, margin: 20 }}>
-        <CardWrapper title="一對一視頻" extra={<QuestionCircleOutlined />}>
+        <CardWrapper title="一对一视频通话" extra={<QuestionCircleOutlined />}>
           <BasicFrom />
         </CardWrapper>
         <Collapse>
