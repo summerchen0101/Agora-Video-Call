@@ -8,13 +8,15 @@ import {
   setChannel,
   setToken,
   useTypedSelector,
-  addRemoteStreams,
+  initializeState,
   addStreamPlayers,
   removeStreamPlayers,
 } from '@/store/reducer';
 import AgoraRTC from '@/utils/AgoraEnhancer';
 import FormWrapper from './FormWrapper';
 import { rtc } from '@/utils/rtc';
+import { handleEvent } from '@/utils/streamEventHandler';
+import { initial } from 'lodash';
 
 const randomUserId = Math.floor(Math.random() * 1000000001);
 
@@ -34,48 +36,31 @@ const App: React.FC = () => {
     microphone,
     camara,
   } = useTypedSelector((state) => state);
-  const onStreamAdded = (stream, client) => {
-    console.log('onStreamAdded' + stream.getId());
-    setRemoteStreams(remoteStreams.concat(stream));
-    client.subscribe(stream);
-  };
-  const onRemoteClientAdded = (stream, client) => {
-    dispatch(addStreamPlayers(stream.getId()));
-    stream.play(`player-${stream.getId()}`);
-  };
-  const onPeerLeave = (stream, client) => {
-    console.log('onPeerLeave');
-    dispatch(removeStreamPlayers(stream.getId()));
-    if (stream && stream.isPlaying()) {
-      stream.stop();
-    }
-  };
-  const onStreamRemoved = (stream, client) => {
-    console.log('onStreamRemoved');
-    dispatch(removeStreamPlayers(stream.getId()));
-    if (stream && stream.isPlaying()) {
-      stream.stop();
-    }
-  };
-  const handleEvent = (client) => {
-    client.on('stream-added', (e) => onStreamAdded(e.stream, client));
-    client.on('stream-subscribed', (e) =>
-      onRemoteClientAdded(e.stream, client),
-    );
-    client.on('stream-removed', (e) => onStreamRemoved(e.stream, client));
-    client.on('peer-leave', (e) => onPeerLeave(e.stream, client));
-  };
+
   const onJoin = async () => {
+    if (isJoined) {
+      message.error('Your already joined');
+      return;
+    }
     rtc.client = AgoraRTC.createClient({ mode, codec });
     try {
       await rtc.client.init(appId);
       console.log('AgoraRTC client initialized');
     } catch (err) {
-      console.log('AgoraRTC client init failed', err);
+      message.error('client init failed, please open console see more detail');
+      console.error(err);
     }
-    handleEvent(rtc.client);
+    handleEvent(dispatch, rtc.client);
     const userId = uid ? +uid : randomUserId;
-    await rtc.client.join(token, channel, userId);
+    try {
+      await rtc.client.join(token, channel, userId);
+    } catch (err) {
+      message.error('client join failed, please open console see more detail');
+      console.error(err);
+    }
+    message.success('join channel: ' + channel + ' success, uid: ' + userId);
+
+    setisJoined(true);
 
     // create a ne stream
     const stream = AgoraRTC.createStream({
@@ -88,7 +73,12 @@ const App: React.FC = () => {
     });
     setLocalStream(stream);
     dispatch(addStreamPlayers(+stream.getId()));
-    await stream.init();
+    try {
+      await stream.init();
+    } catch (err) {
+      message.error('stream init failed, please open console see more detail');
+      console.error(err);
+    }
 
     stream.play(`player-${stream.getId()}`);
     await rtc.client.publish(stream);
@@ -96,14 +86,44 @@ const App: React.FC = () => {
     setisJoined(true);
   };
   const onLeave = async () => {
-    await rtc.client.leave();
+    if (!rtc.client) {
+      message.error('Please Join First!');
+      return;
+    }
+    if (!isJoined) {
+      message.error('You are not in channel');
+      return;
+    }
+    try {
+      await rtc.client.leave();
+    } catch (err) {
+      message.error('leave success');
+      console.error(err);
+    }
     if (localStream.isPlaying()) {
       localStream.stop();
     }
     localStream.close();
     dispatch(removeStreamPlayers(+localStream.getId()));
+    clearData();
+    message.success('leave success');
+  };
+  const clearData = () => {
+    setisJoined(false);
+    setIsPublished(false);
+    rtc.client = null;
+    setLocalStream(null);
+    dispatch(initializeState());
   };
   const onPublish = async () => {
+    if (!rtc.client) {
+      message.error('Please Join Room First');
+      return;
+    }
+    if (isPublished) {
+      message.error('Your already published');
+      return;
+    }
     try {
       await rtc.client.publish(localStream);
     } catch (err) {
@@ -111,8 +131,17 @@ const App: React.FC = () => {
       console.error(err);
     }
     message.info('published');
+    setIsPublished(true);
   };
   const onUnPublish = async () => {
+    if (!rtc.client) {
+      message.error('Please Join Room First');
+      return;
+    }
+    if (!isPublished) {
+      message.error("Your didn't publish");
+      return;
+    }
     try {
       await rtc.client.unpublish(localStream);
     } catch (err) {
@@ -120,6 +149,7 @@ const App: React.FC = () => {
       console.error(err);
     }
     message.info('unpublish');
+    setIsPublished(false);
   };
   return (
     <FormWrapper

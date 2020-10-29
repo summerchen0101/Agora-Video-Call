@@ -12,7 +12,6 @@ interface IRootState {
   resolution: string;
   mode: ModeType;
   codec: CodecType;
-  remoteStreams: { [id: string]: any };
   streamPlayers: number[];
 }
 
@@ -29,7 +28,6 @@ const initialState: IRootState = {
   resolution: '',
   mode: 'live',
   codec: 'h264',
-  remoteStreams: {},
   streamPlayers: [],
 };
 
@@ -64,10 +62,6 @@ const module = createSlice({
     setCodec(state, action: PayloadAction<CodecType>) {
       state.codec = action.payload;
     },
-    addRemoteStreams(state, action: PayloadAction<any>) {
-      const id = action.payload.getId();
-      state.remoteStreams[id] = action.payload;
-    },
     addStreamPlayers(state, action: PayloadAction<number>) {
       state.streamPlayers.push(action.payload);
     },
@@ -75,6 +69,18 @@ const module = createSlice({
       state.streamPlayers = state.streamPlayers.filter(
         (id) => +id !== +action.payload,
       );
+    },
+    initializeState(state) {
+      state.appId = '';
+      state.channel = '';
+      state.token = '';
+      state.uid = '';
+      state.camara = '';
+      state.microphone = '';
+      state.resolution = '';
+      state.mode = 'live';
+      state.codec = 'h264';
+      state.streamPlayers = [];
     },
   },
 });
@@ -89,9 +95,9 @@ export const {
   setResolution,
   setMode,
   setCodec,
-  addRemoteStreams,
   addStreamPlayers,
   removeStreamPlayers,
+  initializeState,
 } = module.actions;
 
 export default module.reducer;

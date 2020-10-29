@@ -42,7 +42,11 @@ const App: React.FC = () => {
       </div>
       <div style={{ flex: 1, margin: 20 }}>
         {streamPlayers.map((uid) => (
-          <div id={`player-${uid}`} style={{ width: 300, height: 200 }}></div>
+          <div
+            key={uid}
+            id={`player-${uid}`}
+            style={{ width: 300, height: 200 }}
+          ></div>
         ))}
       </div>
     </div>
