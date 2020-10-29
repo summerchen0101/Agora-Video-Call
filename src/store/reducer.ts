@@ -13,7 +13,6 @@ interface IRootState {
   mode: ModeType;
   codec: CodecType;
   remoteStreams: { [id: string]: any };
-  localStream: any;
   streamPlayers: number[];
 }
 
@@ -31,7 +30,6 @@ const initialState: IRootState = {
   mode: 'live',
   codec: 'h264',
   remoteStreams: {},
-  localStream: null,
   streamPlayers: [],
 };
 
@@ -70,9 +68,6 @@ const module = createSlice({
       const id = action.payload.getId();
       state.remoteStreams[id] = action.payload;
     },
-    setLocalStream(state, action: PayloadAction<any>) {
-      state.localStream = action.payload;
-    },
     addStreamPlayers(state, action: PayloadAction<number>) {
       state.streamPlayers.push(action.payload);
     },
@@ -90,7 +85,6 @@ export const {
   setMode,
   setCodec,
   addRemoteStreams,
-  setLocalStream,
   addStreamPlayers,
 } = module.actions;
 

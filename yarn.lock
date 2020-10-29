@@ -763,6 +763,11 @@ agora-rtc-sdk@^3.2.3:
   resolved "https://registry.yarnpkg.com/agora-rtc-sdk/-/agora-rtc-sdk-3.2.3.tgz#72a2cfbdbe537bc819734f6368f3e3e5c86a0646"
   integrity sha512-uB8MariNHbk9eddU2xQRGgJk0BHFRphGDXfKARv4Nq+6Onl9k9AGYJBBMi+yhBsMzYx3GxH9fic+MBT9XDpohQ==
 
+agora-stream-player@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/agora-stream-player/-/agora-stream-player-1.2.0.tgz#dae292fecd46c22114e0c584d14edda0935ecc14"
+  integrity sha512-0w6iWUKc2YaRbqw+QoBltVttiP0o+SnNV9ja8yYbmE0w2H8QvsgNW5mE+PsFHBkeq4xBf9t19o4rvKG2em5szA==
+
 agoran-awe@^1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/agoran-awe/-/agoran-awe-1.1.2.tgz#64983b0bab0a97c27bf95c0fb63f7ebc06da3a19"

@@ -10,6 +10,7 @@ import { Row, Col } from 'antd';
 import { useDispatch } from 'react-redux';
 import { useTypedSelector } from '@/store/reducer';
 import { rtc } from '@/utils/rtc';
+import StreamPlayer from 'agora-stream-player';
 
 console.log(
   'agora sdk version: ' +
@@ -26,6 +27,7 @@ const CardWrapper = styled(Card)`
 `;
 
 const App: React.FC = () => {
+  const streamPlayers = useTypedSelector((state) => state.streamPlayers);
   return (
     <div style={{ display: 'flex' }}>
       <div style={{ width: 480, margin: 20 }}>
@@ -38,7 +40,11 @@ const App: React.FC = () => {
           </Panel>
         </Collapse>
       </div>
-      <div style={{ flex: 1, margin: 20 }}>video</div>
+      <div style={{ flex: 1, margin: 20 }}>
+        {streamPlayers.map((uid) => (
+          <div id={`player-${uid}`} style={{ width: 300, height: 200 }}></div>
+        ))}
+      </div>
     </div>
   );
 };

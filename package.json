@@ -19,6 +19,7 @@
     "@types/react": "16.9.49",
     "@types/react-dom": "16.9.8",
     "agora-rtc-sdk": "^3.2.3",
+    "agora-stream-player": "^1.2.0",
     "agoran-awe": "^1.1.2",
     "antd": "^4.6.5",
     "axios": "^0.20.0",

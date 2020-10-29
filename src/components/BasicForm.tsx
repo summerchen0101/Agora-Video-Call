@@ -70,7 +70,7 @@ const App: React.FC = () => {
     dispatch(addStreamPlayers(+userId));
     await stream.init();
 
-    // stream.play(`stream-player-${stream.getId()}`);
+    stream.play(`player-${userId}`);
     await client.publish(stream);
     setIsPublished(true);
     setisJoined(true);
