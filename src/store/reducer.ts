@@ -71,6 +71,11 @@ const module = createSlice({
     addStreamPlayers(state, action: PayloadAction<number>) {
       state.streamPlayers.push(action.payload);
     },
+    removeStreamPlayers(state, action: PayloadAction<number>) {
+      state.streamPlayers = state.streamPlayers.filter(
+        (id) => +id !== +action.payload,
+      );
+    },
   },
 });
 
@@ -86,6 +91,7 @@ export const {
   setCodec,
   addRemoteStreams,
   addStreamPlayers,
+  removeStreamPlayers,
 } = module.actions;
 
 export default module.reducer;

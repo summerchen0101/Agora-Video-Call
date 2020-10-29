@@ -10,17 +10,20 @@ import {
   useTypedSelector,
   addRemoteStreams,
   addStreamPlayers,
+  removeStreamPlayers,
 } from '@/store/reducer';
 import AgoraRTC from '@/utils/AgoraEnhancer';
 import FormWrapper from './FormWrapper';
 import { rtc } from '@/utils/rtc';
 
+const randomUserId = Math.floor(Math.random() * 1000000001);
+
 const App: React.FC = () => {
   const dispatch = useDispatch();
   const [isJoined, setisJoined] = useState(false);
   const [isPublished, setIsPublished] = useState(false);
-  const [agoraClient, setClient] = useState(null);
   const [localStream, setLocalStream] = useState(null);
+  const [remoteStreams, setRemoteStreams] = useState([]);
   const {
     mode,
     codec,
@@ -31,31 +34,48 @@ const App: React.FC = () => {
     microphone,
     camara,
   } = useTypedSelector((state) => state);
-  const userId = uid || Math.floor(Math.random() * 1000000001);
-  const onStreamAdded = (e) => {
-    console.log('onStreamAdded' + e.stream.getId());
-    dispatch(addRemoteStreams(e.stream));
+  const onStreamAdded = (stream, client) => {
+    console.log('onStreamAdded' + stream.getId());
+    setRemoteStreams(remoteStreams.concat(stream));
+    client.subscribe(stream);
   };
-  const onRemoteClientAdded = () => console.log('onRemoteClientAdded');
-  const onStreamRemoved = () => console.log('onStreamRemoved');
-  const onPeerLeave = () => console.log('onPeerLeave');
+  const onRemoteClientAdded = (stream, client) => {
+    dispatch(addStreamPlayers(stream.getId()));
+    stream.play(`player-${stream.getId()}`);
+  };
+  const onPeerLeave = (stream, client) => {
+    console.log('onPeerLeave');
+    dispatch(removeStreamPlayers(stream.getId()));
+    if (stream && stream.isPlaying()) {
+      stream.stop();
+    }
+  };
+  const onStreamRemoved = (stream, client) => {
+    console.log('onStreamRemoved');
+    dispatch(removeStreamPlayers(stream.getId()));
+    if (stream && stream.isPlaying()) {
+      stream.stop();
+    }
+  };
   const handleEvent = (client) => {
-    client.on('stream-added', onStreamAdded);
-    client.on('stream-subscribed', onRemoteClientAdded);
-    client.on('stream-removed', onStreamRemoved);
-    client.on('peer-leave', onPeerLeave);
+    client.on('stream-added', (e) => onStreamAdded(e.stream, client));
+    client.on('stream-subscribed', (e) =>
+      onRemoteClientAdded(e.stream, client),
+    );
+    client.on('stream-removed', (e) => onStreamRemoved(e.stream, client));
+    client.on('peer-leave', (e) => onPeerLeave(e.stream, client));
   };
   const onJoin = async () => {
-    const client = AgoraRTC.createClient({ mode, codec });
-    setClient(client);
+    rtc.client = AgoraRTC.createClient({ mode, codec });
     try {
-      await client.init(appId);
+      await rtc.client.init(appId);
       console.log('AgoraRTC client initialized');
     } catch (err) {
       console.log('AgoraRTC client init failed', err);
     }
-    handleEvent(client);
-    await client.join(token, channel, userId);
+    handleEvent(rtc.client);
+    const userId = uid ? +uid : randomUserId;
+    await rtc.client.join(token, channel, userId);
 
     // create a ne stream
     const stream = AgoraRTC.createStream({
@@ -67,13 +87,21 @@ const App: React.FC = () => {
       cameraId: camara,
     });
     setLocalStream(stream);
-    dispatch(addStreamPlayers(+userId));
+    dispatch(addStreamPlayers(+stream.getId()));
     await stream.init();
 
-    stream.play(`player-${userId}`);
-    await client.publish(stream);
+    stream.play(`player-${stream.getId()}`);
+    await rtc.client.publish(stream);
     setIsPublished(true);
     setisJoined(true);
+  };
+  const onLeave = async () => {
+    await rtc.client.leave();
+    if (localStream.isPlaying()) {
+      localStream.stop();
+    }
+    localStream.close();
+    dispatch(removeStreamPlayers(+localStream.getId()));
   };
   return (
     <FormWrapper
@@ -124,7 +152,9 @@ const App: React.FC = () => {
             </Button>
           </Col>
           <Col span={6}>
-            <Button block>Leave</Button>
+            <Button block onClick={onLeave}>
+              Leave
+            </Button>
           </Col>
           <Col span={6}>
             <Button block>Publish</Button>
