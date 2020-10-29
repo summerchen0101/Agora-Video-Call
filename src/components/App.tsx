@@ -6,11 +6,8 @@ import AdvanceForm from './AdvanceForm';
 import styled from 'styled-components';
 
 import AgoraRTC from 'agora-rtc-sdk';
-import { Row, Col } from 'antd';
-import { useDispatch } from 'react-redux';
 import { useTypedSelector } from '@/store/reducer';
-import { rtc } from '@/utils/rtc';
-import StreamPlayer from 'agora-stream-player';
+import StreamPlayers from '@/components/StreamPlayers';
 
 console.log(
   'agora sdk version: ' +
@@ -41,13 +38,7 @@ const App: React.FC = () => {
         </Collapse>
       </div>
       <div style={{ flex: 1, margin: 20 }}>
-        {streamPlayers.map((uid) => (
-          <div
-            key={uid}
-            id={`player-${uid}`}
-            style={{ width: 300, height: 200 }}
-          ></div>
-        ))}
+        <StreamPlayers uids={streamPlayers} />
       </div>
     </div>
   );
