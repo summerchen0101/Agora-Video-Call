@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Select, Form, Input, Radio, Row, Col } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { useDispatch } from 'react-redux';
@@ -15,11 +15,46 @@ import FormWrapper from './FormWrapper';
 
 const { Option } = Select;
 
+const resolutionOptions = [
+  {
+    name: 'default',
+    value: 'default',
+  },
+  {
+    name: '480p',
+    value: '480p',
+  },
+  {
+    name: '720p',
+    value: '720p',
+  },
+  {
+    name: '1080p',
+    value: '1080p',
+  },
+];
+
 const App: React.FC = () => {
+  const [camaraList, setCamaraList] = useState([]);
+  const [microphoneList, setMicrophoneList] = useState([]);
   const dispatch = useDispatch();
-  const handleChange = () => {
-    /**/
-  };
+  useEffect(() => {
+    AgoraRTC.getDevices((devices) => {
+      const result = devices
+        .filter((t) => ['audioinput', 'videoinput'].includes(t.kind))
+        .reduce((obj, device) => {
+          if (!obj[device.kind]) obj[device.kind] = [];
+          obj[device.kind].push({
+            name: device.label || 'default',
+            value: device.deviceId || 'default',
+            kind: device.kind,
+          });
+          return obj;
+        }, {}) as { videoinput: any[]; audioinput: any[] };
+      setCamaraList(result.videoinput);
+      setMicrophoneList(result.audioinput);
+    });
+  }, []);
   const modeOptions = ['live', 'rtc'];
   const codecOptions = ['h264', 'vp8'];
   return (
@@ -34,18 +69,36 @@ const App: React.FC = () => {
       </Form.Item>
 
       <Form.Item label="Camara" name="camara">
-        <Select defaultValue="1" onChange={(value) => setCamara(value)}>
-          <Option value="1">default</Option>
+        <Select defaultValue="default" onChange={(value) => setCamara(value)}>
+          {camaraList.map((t) => (
+            <Option key={t.value} value={t.value}>
+              {t.name}
+            </Option>
+          ))}
         </Select>
       </Form.Item>
       <Form.Item label="Microphone" name="microphone">
-        <Select defaultValue="1" onChange={(value) => setMicrophone(value)}>
-          <Option value="1">default</Option>
+        <Select
+          defaultValue="default"
+          onChange={(value) => setMicrophone(value)}
+        >
+          {microphoneList.map((t) => (
+            <Option key={t.value} value={t.value}>
+              {t.name}
+            </Option>
+          ))}
         </Select>
       </Form.Item>
       <Form.Item label="Camara Resolution" name="resolution">
-        <Select defaultValue="1" onChange={(value) => setResolution(value)}>
-          <Option value="1">default</Option>
+        <Select
+          defaultValue="default"
+          onChange={(value) => setResolution(value)}
+        >
+          {resolutionOptions.map((t) => (
+            <Option key={t.value} value={t.value}>
+              {t.name}
+            </Option>
+          ))}
         </Select>
       </Form.Item>
       <Form.Item label="Mode" name="mode">

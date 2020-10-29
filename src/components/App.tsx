@@ -5,6 +5,15 @@ import BasicFrom from './BasicForm';
 import AdvanceForm from './AdvanceForm';
 import styled from 'styled-components';
 
+import AgoraRTC from 'agora-rtc-sdk';
+
+console.log(
+  'agora sdk version: ' +
+    AgoraRTC.VERSION +
+    ' compatible: ' +
+    AgoraRTC.checkSystemRequirements(),
+);
+
 const { Panel } = Collapse;
 
 const CardWrapper = styled(Card)`

@@ -10,7 +10,7 @@ import FormWrapper from './FormWrapper';
 const App: React.FC = () => {
   const dispatch = useDispatch();
   const onJoin = () => {
-    /**/
+    //
   };
   return (
     <FormWrapper
