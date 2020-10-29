@@ -2,6 +2,8 @@ import React from 'react';
 import { Card, Form, Input, Button, Row, Col } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
+import { useDispatch } from 'react-redux';
+import { setAppID, setChannel, setToken } from '@/store/reducer';
 
 const FormWrapper = styled(Form)`
   .ant-form-item {
@@ -16,6 +18,7 @@ const FormWrapper = styled(Form)`
 `;
 
 const App: React.FC = () => {
+  const dispatch = useDispatch();
   return (
     <Card
       title="一對一視頻"
@@ -35,7 +38,7 @@ const App: React.FC = () => {
           name="app-id"
           rules={[{ required: true, message: 'Please input App ID!' }]}
         >
-          <Input />
+          <Input onBlur={(e) => dispatch(setAppID(e.target.value))} />
         </Form.Item>
 
         <Form.Item
@@ -43,14 +46,14 @@ const App: React.FC = () => {
           name="cannel"
           rules={[{ required: true, message: 'Please input Cannel Name!' }]}
         >
-          <Input />
+          <Input onBlur={(e) => dispatch(setChannel(e.target.value))} />
         </Form.Item>
         <Form.Item
           label="Token"
           name="token"
           rules={[{ required: true, message: 'Please input the Token!' }]}
         >
-          <Input />
+          <Input onBlur={(e) => dispatch(setToken(e.target.value))} />
         </Form.Item>
 
         <Form.Item className="form-footer">
