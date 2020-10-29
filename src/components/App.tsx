@@ -6,6 +6,7 @@ import AdvanceForm from './AdvanceForm';
 import styled from 'styled-components';
 
 import AgoraRTC from 'agora-rtc-sdk';
+import { Row, Col } from 'antd';
 
 console.log(
   'agora sdk version: ' +
@@ -17,24 +18,25 @@ console.log(
 const { Panel } = Collapse;
 
 const CardWrapper = styled(Card)`
-  width: 480px;
   background-color: #fff;
-  margin-top: 40px;
   margin-bottom: 15px;
 `;
 
 const App: React.FC = () => {
   return (
-    <>
-      <CardWrapper title="一對一視頻" extra={<QuestionCircleOutlined />}>
-        <BasicFrom />
-      </CardWrapper>
-      <Collapse>
-        <Panel header="Advence Setting" key="1">
-          <AdvanceForm />
-        </Panel>
-      </Collapse>
-    </>
+    <div style={{ display: 'flex' }}>
+      <div style={{ width: 480, margin: 20 }}>
+        <CardWrapper title="一對一視頻" extra={<QuestionCircleOutlined />}>
+          <BasicFrom />
+        </CardWrapper>
+        <Collapse>
+          <Panel header="Advence Setting" key="1">
+            <AdvanceForm />
+          </Panel>
+        </Collapse>
+      </div>
+      <div style={{ flex: 1, margin: 20 }}>video</div>
+    </div>
   );
 };
 

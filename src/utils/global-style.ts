@@ -1,9 +1,8 @@
 import { createGlobalStyle } from 'styled-components';
 
 export default createGlobalStyle`
-  body, html {
+  body, html, #root {
     background-color: #fafafa;
-    display: flex;
-    justify-content: center;
+    height: 100vh;
   }
 `;
