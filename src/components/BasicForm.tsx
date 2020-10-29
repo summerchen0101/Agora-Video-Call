@@ -17,6 +17,7 @@ import FormWrapper from './FormWrapper';
 import { rtc } from '@/utils/rtc';
 import { handleEvent } from '@/utils/streamEventHandler';
 import { initial } from 'lodash';
+import { useForm } from 'antd/lib/form/Form';
 
 const randomUserId = Math.floor(Math.random() * 1000000001);
 
@@ -25,19 +26,34 @@ const App: React.FC = () => {
   const [isJoined, setisJoined] = useState(false);
   const [isPublished, setIsPublished] = useState(false);
   const [localStream, setLocalStream] = useState(null);
-  const [remoteStreams, setRemoteStreams] = useState([]);
   const {
     mode,
     codec,
-    appId,
     token,
     channel,
     uid,
     microphone,
     camara,
+    appId,
   } = useTypedSelector((state) => state);
+  const [form] = useForm();
 
+  const clearData = () => {
+    setisJoined(false);
+    setIsPublished(false);
+    rtc.client = null;
+    setLocalStream(null);
+    dispatch(initializeState());
+    form.resetFields();
+  };
   const onJoin = async () => {
+    form.setFieldsValue({ token, channel, uid, appId });
+    try {
+      await form.validateFields();
+    } catch (err) {
+      message.error('Please fill up the form fields');
+      return;
+    }
     if (isJoined) {
       message.error('Your already joined');
       return;
@@ -49,6 +65,7 @@ const App: React.FC = () => {
     } catch (err) {
       message.error('client init failed, please open console see more detail');
       console.error(err);
+      return;
     }
     handleEvent(dispatch, rtc.client);
     const userId = uid ? +uid : randomUserId;
@@ -57,6 +74,7 @@ const App: React.FC = () => {
     } catch (err) {
       message.error('client join failed, please open console see more detail');
       console.error(err);
+      return;
     }
     message.success('join channel: ' + channel + ' success, uid: ' + userId);
 
@@ -108,13 +126,6 @@ const App: React.FC = () => {
     clearData();
     message.success('leave success');
   };
-  const clearData = () => {
-    setisJoined(false);
-    setIsPublished(false);
-    rtc.client = null;
-    setLocalStream(null);
-    dispatch(initializeState());
-  };
   const onPublish = async () => {
     if (!rtc.client) {
       message.error('Please Join Room First');
@@ -157,12 +168,13 @@ const App: React.FC = () => {
       initialValues={{ remember: true }}
       size="large"
       layout="vertical"
+      form={form}
       // onFinish={onFinish}
       // onFinishFailed={onFinishFailed}
     >
       <Form.Item
         label="App ID"
-        name="app-id"
+        name="appId"
         rules={[{ required: true, message: 'Please input App ID!' }]}
       >
         <Input
@@ -195,7 +207,7 @@ const App: React.FC = () => {
       <Form.Item className="form-footer">
         <Row gutter={8}>
           <Col span={6}>
-            <Button block onClick={onJoin}>
+            <Button block onClick={onJoin} htmlType="submit">
               Join
             </Button>
           </Col>
