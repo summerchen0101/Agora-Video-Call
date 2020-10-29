@@ -16,7 +16,6 @@ import AgoraRTC from '@/utils/AgoraEnhancer';
 import FormWrapper from './FormWrapper';
 import { rtc } from '@/utils/rtc';
 import { handleEvent } from '@/utils/streamEventHandler';
-import { initial } from 'lodash';
 import { useForm } from 'antd/lib/form/Form';
 
 const randomUserId = Math.floor(Math.random() * 1000000001);
@@ -76,9 +75,6 @@ const App: React.FC = () => {
       console.error(err);
       return;
     }
-    message.success('join channel: ' + channel + ' success, uid: ' + userId);
-
-    setisJoined(true);
 
     // create a ne stream
     const stream = AgoraRTC.createStream({
@@ -99,7 +95,13 @@ const App: React.FC = () => {
     }
 
     stream.play(`player-${stream.getId()}`);
-    await rtc.client.publish(stream);
+    try {
+      await rtc.client.publish(stream);
+    } catch (err) {
+      message.error('publish failed');
+      console.error(err);
+    }
+    message.info('published');
     setIsPublished(true);
     setisJoined(true);
   };
@@ -207,22 +209,38 @@ const App: React.FC = () => {
       <Form.Item className="form-footer">
         <Row gutter={8}>
           <Col span={6}>
-            <Button block onClick={onJoin} htmlType="submit">
+            <Button
+              block
+              onClick={onJoin}
+              htmlType="submit"
+              type="primary"
+              disabled={isJoined}
+            >
               Join
             </Button>
           </Col>
           <Col span={6}>
-            <Button block onClick={onLeave}>
+            <Button block onClick={onLeave} type="primary" disabled={!isJoined}>
               Leave
             </Button>
           </Col>
           <Col span={6}>
-            <Button block onClick={onPublish}>
+            <Button
+              block
+              type="primary"
+              onClick={onPublish}
+              disabled={isPublished || !isJoined}
+            >
               Publish
             </Button>
           </Col>
           <Col span={6}>
-            <Button block onClick={onUnPublish}>
+            <Button
+              block
+              type="primary"
+              onClick={onUnPublish}
+              disabled={!isPublished || !isJoined}
+            >
               Unpublish
             </Button>
           </Col>

@@ -6,10 +6,9 @@ interface IRootState {
   appId: string;
   channel: string;
   token: string;
-  uid: string;
+  uid: number;
   camara: string;
   microphone: string;
-  resolution: string;
   mode: ModeType;
   codec: CodecType;
   streamPlayers: number[];
@@ -22,10 +21,9 @@ const initialState: IRootState = {
   channel: 'A cool channel',
   token:
     '006246a5190e9c544f5973e41237cc100f5IACSPTUJ0OI2yNhVQTyFKOdIWfnm8LUWWHXbWcnzZxRzC5Hmy34AAAAAEABO10qJuW6bXwEAAQC5bptf',
-  uid: '',
+  uid: undefined,
   camara: '',
-  microphone: '',
-  resolution: '',
+  microphone: 'default',
   mode: 'live',
   codec: 'h264',
   streamPlayers: [],
@@ -44,7 +42,7 @@ const module = createSlice({
     setToken(state, action: PayloadAction<string>) {
       state.token = action.payload;
     },
-    setUid(state, action: PayloadAction<string>) {
+    setUid(state, action: PayloadAction<number>) {
       state.uid = action.payload;
     },
     setCamara(state, action: PayloadAction<string>) {
@@ -52,9 +50,6 @@ const module = createSlice({
     },
     setMicrophone(state, action: PayloadAction<string>) {
       state.microphone = action.payload;
-    },
-    setResolution(state, action: PayloadAction<string>) {
-      state.resolution = action.payload;
     },
     setMode(state, action: PayloadAction<ModeType>) {
       state.mode = action.payload;
@@ -74,10 +69,9 @@ const module = createSlice({
       state.appId = '';
       state.channel = '';
       state.token = '';
-      state.uid = '';
+      state.uid = undefined;
       state.camara = '';
-      state.microphone = '';
-      state.resolution = '';
+      state.microphone = 'default';
       state.mode = 'live';
       state.codec = 'h264';
       state.streamPlayers = [];
@@ -92,7 +86,6 @@ export const {
   setUid,
   setCamara,
   setMicrophone,
-  setResolution,
   setMode,
   setCodec,
   addStreamPlayers,
