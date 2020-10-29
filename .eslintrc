@@ -1,0 +1,42 @@
+{
+   "root":true,
+   "env":{
+      "browser":true,
+      "amd":true,
+      "node":true
+   },
+   "parser":"@typescript-eslint/parser",
+   "plugins":[
+      "@typescript-eslint",
+      "prettier",
+      "redux-saga",
+      "react",
+      "react-hooks"
+   ],
+   "extends":[
+      "eslint:recommended",
+      "plugin:@typescript-eslint/eslint-recommended",
+      "plugin:@typescript-eslint/recommended",
+      "prettier",
+      "prettier/react"
+   ],
+   "rules":{
+      "no-console":1,
+      "prettier/prettier":2
+   },
+   "settings": {
+      "import/resolver":{
+         "alias":{
+            "map":[
+               ["@", "./src"]
+            ],
+            "extensions":[
+               ".ts",
+               ".js",
+               ".jsx",
+               ".json"
+            ]
+         }
+      }
+   }
+}

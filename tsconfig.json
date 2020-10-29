@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "sourceMap": true,
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "experimentalDecorators": true,
+    "target": "es5",
+    "jsx": "react",
+    "lib": [
+      "dom",
+      "es6"
+    ],
+  },
+  "include": [
+    "src"
+  ],
+  "exclude": [],
+  "compileOnSave": false
+}
