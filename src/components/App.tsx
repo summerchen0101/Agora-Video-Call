@@ -7,6 +7,9 @@ import styled from 'styled-components';
 
 import AgoraRTC from 'agora-rtc-sdk';
 import { Row, Col } from 'antd';
+import { useDispatch } from 'react-redux';
+import { useTypedSelector } from '@/store/reducer';
+import { rtc } from '@/utils/rtc';
 
 console.log(
   'agora sdk version: ' +

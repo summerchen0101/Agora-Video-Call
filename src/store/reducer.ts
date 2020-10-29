@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
+import { TypedUseSelectorHook, useSelector } from 'react-redux';
 type ModeType = 'live' | 'rtc';
 type CodecType = 'h264' | 'vp8';
-interface IState {
+interface IRootState {
   appId: string;
-  cannel: string;
+  channel: string;
   token: string;
   uid: string;
   camara: string;
@@ -12,18 +12,27 @@ interface IState {
   resolution: string;
   mode: ModeType;
   codec: CodecType;
+  remoteStreams: { [id: string]: any };
+  localStream: any;
+  streamPlayers: number[];
 }
 
-const initialState: IState = {
-  appId: '',
-  cannel: '',
-  token: '',
+export const useTypedSelector: TypedUseSelectorHook<IRootState> = useSelector;
+
+const initialState: IRootState = {
+  appId: '246a5190e9c544f5973e41237cc100f5',
+  channel: 'A cool channel',
+  token:
+    '006246a5190e9c544f5973e41237cc100f5IACSPTUJ0OI2yNhVQTyFKOdIWfnm8LUWWHXbWcnzZxRzC5Hmy34AAAAAEABO10qJuW6bXwEAAQC5bptf',
   uid: '',
   camara: '',
   microphone: '',
   resolution: '',
   mode: 'live',
   codec: 'h264',
+  remoteStreams: {},
+  localStream: null,
+  streamPlayers: [],
 };
 
 const module = createSlice({
@@ -34,7 +43,7 @@ const module = createSlice({
       state.appId = action.payload;
     },
     setChannel(state, action: PayloadAction<string>) {
-      state.cannel = action.payload;
+      state.channel = action.payload;
     },
     setToken(state, action: PayloadAction<string>) {
       state.token = action.payload;
@@ -57,6 +66,16 @@ const module = createSlice({
     setCodec(state, action: PayloadAction<CodecType>) {
       state.codec = action.payload;
     },
+    addRemoteStreams(state, action: PayloadAction<any>) {
+      const id = action.payload.getId();
+      state.remoteStreams[id] = action.payload;
+    },
+    setLocalStream(state, action: PayloadAction<any>) {
+      state.localStream = action.payload;
+    },
+    addStreamPlayers(state, action: PayloadAction<number>) {
+      state.streamPlayers.push(action.payload);
+    },
   },
 });
 
@@ -70,6 +89,9 @@ export const {
   setResolution,
   setMode,
   setCodec,
+  addRemoteStreams,
+  setLocalStream,
+  addStreamPlayers,
 } = module.actions;
 
 export default module.reducer;
