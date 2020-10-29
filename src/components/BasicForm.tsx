@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Form, Input, Button, Row, Col } from 'antd';
+import { message, Form, Input, Button, Row, Col } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
@@ -103,6 +103,24 @@ const App: React.FC = () => {
     localStream.close();
     dispatch(removeStreamPlayers(+localStream.getId()));
   };
+  const onPublish = async () => {
+    try {
+      await rtc.client.publish(localStream);
+    } catch (err) {
+      message.error('publish failed');
+      console.error(err);
+    }
+    message.info('published');
+  };
+  const onUnPublish = async () => {
+    try {
+      await rtc.client.unpublish(localStream);
+    } catch (err) {
+      message.error('unpublish failed');
+      console.error(err);
+    }
+    message.info('unpublish');
+  };
   return (
     <FormWrapper
       name="basic"
@@ -157,10 +175,14 @@ const App: React.FC = () => {
             </Button>
           </Col>
           <Col span={6}>
-            <Button block>Publish</Button>
+            <Button block onClick={onPublish}>
+              Publish
+            </Button>
           </Col>
           <Col span={6}>
-            <Button block>Unpublish</Button>
+            <Button block onClick={onUnPublish}>
+              Unpublish
+            </Button>
           </Col>
         </Row>
       </Form.Item>
